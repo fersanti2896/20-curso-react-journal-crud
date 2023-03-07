@@ -1,13 +1,13 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { SaveOutlined } from '@mui/icons-material';
-import { Button, Grid, TextField, Typography } from '@mui/material';
+import { SaveOutlined, UploadOutlined } from '@mui/icons-material';
+import { Button, Grid, IconButton, TextField, Typography } from '@mui/material';
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 import 'sweetalert2/dist/sweetalert2.css'
 
 import { useForm } from '../../hooks/useForm';
 import { ImageGallery } from '../components';
-import { setActiveNote, startSaveNot } from '../../store/journal';
+import { setActiveNote, startLoadingFles, startSaveNot } from '../../store/journal';
 
 export const NoteView = () => {
     const { active: note, messageSaved, isSaving } = useSelector( state => state.journal );
@@ -30,9 +30,16 @@ export const NoteView = () => {
         }
     }, [ messageSaved ]);
     
+    const fileInputRef = useRef();
     
     const onSaveNote = () => {
         dispatch( startSaveNot() );
+    }
+
+    const onFileInputChange = ({ target }) => {
+        if( target.files == 0 ) return;
+
+        dispatch( startLoadingFles( target.files ) );
     }
 
     return (
@@ -51,10 +58,21 @@ export const NoteView = () => {
                 </Grid>
 
                 <Grid item>
+                    <input  multiple
+                            onChange={ onFileInputChange }
+                            ref={ fileInputRef }
+                            style={{ display: 'none' }}
+                            type="file" />
+                    <IconButton color="primary"
+                                disabled={ isSaving }
+                                onClick={ () => fileInputRef.current.click() } >
+                        <UploadOutlined />
+                    </IconButton>
+
                     <Button color='primary'
                             disabled={ isSaving }
                             onClick={ onSaveNote }
-                            sx={{ padding: 2, mb: 2 }}>
+                            sx={{ padding: 2 }}>
                         <SaveOutlined sx={{ fontSize: 30, rm: 1 }}/>
                         Guardar
                     </Button>
