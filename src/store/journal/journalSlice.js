@@ -7,19 +7,19 @@ export const journalSlice = createSlice({
         messageSaved: '',
         notes: [],
         active: null
-        // active: {
-        //     id: 'ABC',
-        //     title: '',
-        //     body: '',
-        //     date: 1234567,
-        //     imageUrls: []
-        // }
     },
     reducers: {
         addNewEmptyNote: ( state, action ) => {
             state.notes.push( action.payload );
             state.isSaving = false;
         },
+        clearNotesLogout: (state) => {
+            state.isSaving = false;
+            state.messageSaved = '';
+            state.notes = [];
+            state.active = null;
+        }
+        ,
         setActiveNote: ( state, action ) => {
             state.active = action.payload;
             state.messageSaved = '';
@@ -57,7 +57,8 @@ export const journalSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { addNewEmptyNote, 
+export const { addNewEmptyNote,
+               clearNotesLogout,
                setActiveNote, 
                setNotes, 
                setSaving, 

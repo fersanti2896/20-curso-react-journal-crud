@@ -99,7 +99,7 @@ export const NoteView = () => {
                                value={ body }
                                variant='filled' />
 
-                    <ImageGallery />
+                    <ImageGallery images={ note.imageUrls } />
                 </Grid>
             </Grid>
         </>
