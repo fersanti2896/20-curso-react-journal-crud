@@ -1,20 +1,30 @@
-import { useSelector } from 'react-redux';
+import { useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { SaveOutlined } from '@mui/icons-material';
 import { Button, Grid, TextField, Typography } from '@mui/material';
 
 import { useForm } from '../../hooks/useForm';
 import { ImageGallery } from '../components';
-import { useMemo } from 'react';
+import { setActiveNote, startSaveNot } from '../../store/journal';
 
 export const NoteView = () => {
     const { active: note } = useSelector( state => state.journal );
     const { body, title, date, onInputChange, formState } = useForm( note );
+    const dispatch = useDispatch();
 
     const dateString = useMemo(() => {
         const newDate = new Date( date );
 
         return newDate.toUTCString();
     }, [ date ]);
+
+    useEffect(() => {
+        dispatch( setActiveNote( formState ) );
+    }, [ formState ])
+    
+    const onSaveNote = () => {
+        dispatch( startSaveNot() );
+    }
 
     return (
         <>
@@ -33,6 +43,7 @@ export const NoteView = () => {
 
                 <Grid item>
                     <Button color='primary'
+                            onClick={ onSaveNote }
                             sx={{ padding: 2, mb: 2 }}>
                         <SaveOutlined sx={{ fontSize: 30, rm: 1 }}/>
                         Guardar
@@ -53,7 +64,7 @@ export const NoteView = () => {
                     <TextField fullWidth
                                multiline
                                minRows={ 5 }
-                               name={ body }
+                               name='body'
                                onChange={ onInputChange }
                                placeholder='¿Qué sucedió en el día de hoy?'
                                type='text'
