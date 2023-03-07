@@ -8,6 +8,10 @@ export const useForm = ( initialForm = { }, formValidations = { } ) => {
         createValidators();
     }, [ formState ])
     
+    useEffect(() => {
+        setFormState( initialForm );
+    }, [ initialForm ]);
+    
 
     /* Función que permite cambiar el valor de un input */
     const onInputChange = ( { target } ) => {
