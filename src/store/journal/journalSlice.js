@@ -31,7 +31,7 @@ export const journalSlice = createSlice({
             state.isSaving = true;
             state.messageSaved = '';
         },
-        savingNewNote: ( state, action ) => {
+        savingNewNote: ( state ) => {
             state.isSaving = true;
         },
         setImagesToActiveNotes: ( state, action ) => {
@@ -51,7 +51,9 @@ export const journalSlice = createSlice({
             state.messageSaved = `${ action.payload.title } actualizado correctamente.` 
         },
         deleteNoteById: ( state, action ) => {
-
+            state.notes = state.notes.filter( note => note.id !== action.payload );
+            state.messageSaved = 'Nota eliminada correctamente.';
+            state.active = null;
         }
     }
 });

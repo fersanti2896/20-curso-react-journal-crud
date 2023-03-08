@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { SaveOutlined, UploadOutlined } from '@mui/icons-material';
+import { DeleteOutline, SaveOutlined, UploadOutlined } from '@mui/icons-material';
 import { Button, Grid, IconButton, TextField, Typography } from '@mui/material';
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 import 'sweetalert2/dist/sweetalert2.css'
 
 import { useForm } from '../../hooks/useForm';
 import { ImageGallery } from '../components';
-import { setActiveNote, startLoadingFles, startSaveNot } from '../../store/journal';
+import { setActiveNote, startDeleteNote, startLoadingFles, startSaveNot } from '../../store/journal';
 
 export const NoteView = () => {
     const { active: note, messageSaved, isSaving } = useSelector( state => state.journal );
@@ -26,7 +26,7 @@ export const NoteView = () => {
 
     useEffect(() => {
         if( messageSaved.length > 0 ) {
-            Swal.fire('Nota actualizada', messageSaved, 'success');
+            Swal.fire('Nota Actualizado', messageSaved, 'success');
         }
     }, [ messageSaved ]);
     
@@ -40,6 +40,29 @@ export const NoteView = () => {
         if( target.files == 0 ) return;
 
         dispatch( startLoadingFles( target.files ) );
+    }
+
+    const onDelete = () => {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "No se podrá revertir esta acción",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar'
+          }).then(( result ) => {
+            if ( result.isConfirmed ) {
+       
+              dispatch( startDeleteNote() );
+              
+              Swal.fire(
+                'Nota Eliminada',
+                '¡Tu nota ha sido eliminada!',
+                'success'
+              )
+            }
+          });  
     }
 
     return (
@@ -97,10 +120,17 @@ export const NoteView = () => {
                                placeholder='¿Qué sucedió en el día de hoy?'
                                type='text'
                                value={ body }
-                               variant='filled' />
-
-                    <ImageGallery images={ note.imageUrls } />
+                               variant='filled' /> 
                 </Grid>
+
+                <Grid container justifyContent='end' >
+                    <Button color='error' onClick={ onDelete } sx={{ mt: 2 }}>
+                        <DeleteOutline />
+                        Borrar
+                    </Button>
+                </Grid>
+
+                <ImageGallery images={ note.imageUrls } />
             </Grid>
         </>
     )
